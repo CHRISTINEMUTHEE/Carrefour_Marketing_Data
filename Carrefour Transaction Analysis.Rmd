@@ -252,6 +252,66 @@ inspect(rule1[1:10])
 rule2<-apriori(assoc_df,parameter =list(support=0.001,conf=0.75))
 rule2
 ```
+```{r}
+# Viewing the rules extracted from these
+inspect(rule2[1:20])
+```
+```{r}
+# Mineral water seem to be standing out as a famous item. We'd want to know which items are bought before mineral water for us to maximuze the discounts on these products
+sorted<-sort(rule2,by="confidence",decreasing = TRUE)
+inspect(sorted[1:10])
+```
+```{r}
+# Getting items purchased before mineral water
+mineral<-subset(rule2,subset=rhs %pin% "mineral water")
+# Sorting items by their confidence level
+sorted_mineral<-sort(mineral,by="confidence",decreasing = TRUE)
+# Viewing the top 10 items
+inspect(sorted_mineral[1:10])
+# Ground beef,olive oil and cake seem to be standing out
+```
+```{r}
+# Getting items that are bought after eggs are bought
+eggs<-subset(rule2,subset=lhs %pin% "eggs")
+# Sorting items by their confidence level
+sorted_eggs<-sort(eggs,by="confidence",decreasing = TRUE)
+# Viewing the top 10 items
+inspect(sorted_eggs[1:10])
+# Mineral water is mostt likely to be bought when eggs are bought
+```
+## Anomaly detection
+
+```{r}
+# Loading the anomalize package to detect anomalies in the trends in our dataset
+library(anomalize)
+# This enables us to vizualize  these anomalies
+library(tidyverse)
+
+library(tibbletime)
+```
+
+```{r}
+# Viweing the head of my dataset
+anom_path<-"http://bit.ly/CarreFourSalesDataset"
+carefour_anomaly_set<-read_csv(anom_path)%<%group_by(Sales)%<%as_tbl_time(date)
+
+```
+```{r}
+anomalized<-anom_df%<%
+  time_apply(Sales,merge=TRUE)%<%
+  anomalize(remainder)%<%
+  time_recompose()
+anomalized%<%glimpse
+```
+
+
+
+
+
+
+
+
+
 
 
 
