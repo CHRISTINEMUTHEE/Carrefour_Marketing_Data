@@ -135,11 +135,72 @@ ggbiplot(pca_d,choice=c(3,4),obs.scale = 1,var.scale = 1,varname.adjust = 0.6,ci
 # Its not easily interpratable.
 ```
 ## Feature Selection
-#### This is ment to extract important features from our dataset using various metrics
 ```{r}
-head(part1_df)
+?ewkm
+```
+
+Performing elbow method to find appropriate number of clusters so as not to get the correct weights of the Entropy weghted Kmeans feature selection function
+```{r}
+# Normalizing so as to perform cluster based feature selection using min max scaller
+normalize<-function(x){
+  return ((x-min(x))/(max(x)-min(x)))}
+```
+
+#### Normalizing Features
+```{r}
+norm_df<-as.data.frame(lapply(new_df, normalize))
+summary(norm_df)
+```
+
+
+```{r}
+# Using the encoded set of data excluding the gross margin which is non variant. 4 are the optimum clusters
+fviz_nbclust(norm_df[,c(-21)],FUNcluster = kmeans,method = "wss") 
+```
+# Using Embedding methods: Entropy Weighted K means
+
+```{r}
+library(wskm)
+#Setting the intial clusters as 3 first and a variable for weight distribution
+# We get to see the importance of every varaible to the kmeans cluster
+# We will exclude the gross margin percentage as its inclusion would give us errors in distance metrics.
+
+my_model<-ewkm(norm_df[,c(-21)],2,lambda = 2,maxiter=1000)
+my_model
+```
+
+```{r}
+library(cluster)
+# Plotting the cluster with 2 as my maximum clusters
+fviz_cluster(my_model,data=norm_df[,c(-21)])
+```
+
+
+```{r}
+# We get to the the importance of each parameter to the individual clusters
+(my_model$weights)*10000
+```
+#### Important variables to cluster one are
+* cogs
+* income
+* Total
+* Tax
+
+#### Important variables to cluster two are
+* Price
+* Quantity
+* gross Income
+* Total
+
+### Association analysis
+
+```{r}
+# Loading the dataset for association
+assoc_df<-fread("http://bit.ly/SupermarketDatasetII")
 
 ```
+
+
 
 
 
