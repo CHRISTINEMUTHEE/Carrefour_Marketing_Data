@@ -1,0 +1,94 @@
+---
+title: "Carrefour Kenya"
+author: "Christine Muthee"
+date: "12/3/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Marketing Analysis.
+
+## 1. Main objective: 
+#### * Getting the most relevant marketting strategies that will result in the highest number of sales ( Total price tax inclusive)
+### Specific Objectives
+#### * Reduce highly dimensional datasets to lower dimensions for easier interpratability and analysis while assessing the attributes carrying core information in our dataset.
+#### * Getting important attributes from the dataset.
+#### * Getting associations within the transactions that will uncover important relationships for effective marketing.
+#### * Checking for anomalies in the sales dataset for the sole purpose of fraud detection.
+
+## 2. Data Inspection.
+```{r}
+library(data.table)
+part1_df<-fread("http://bit.ly/CarreFourDataset")
+head(part1_df)
+```
+#### Checking for missing values 
+
+```{r}
+# Checking for missing values
+any(is.na.data.frame(part1_df))
+# There are no missing values
+```
+#### Checking for duplicated values
+
+```{r}
+# Checing for duplicated data
+any(duplicated.data.frame(part1_df))
+# There are no duplicates in our dataset
+```
+#### Encoding categorical variables to nominal to perform PCA
+```{r}
+library("dbplyr")
+
+numerical<-select_if(part1_df,is.numeric)
+numerical
+```
+```{r}
+str(part1_df)
+```
+```{r}
+?dummyVars
+```
+
+```{r}
+# Selecting non numeric columns
+head(part1_df)
+# Caret package for dummy variables
+library(caret)
+# Encoding using Dummy variables and excluding unique ID and date time data
+dums<-dummyVars("~.",data=part1_df[,c(-1,-9,-10)])
+dums
+# Encoding.
+new_df<-data.frame(predict(dums,newdata =part1_df[,c(-1,-9,-10)]))
+new_df
+```
+```{r}
+?prcomp
+```
+
+```{r}
+# Dimensionality Reduction technique
+# Will use PCA so as to understand the variance displayed by each feature
+reduced_df<-prcomp(new_df,center = TRUE)
+reduced_df$sdev
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
