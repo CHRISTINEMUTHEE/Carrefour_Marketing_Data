@@ -288,17 +288,39 @@ library(anomalize)
 library(tidyverse)
 
 library(tibbletime)
+
+library(ggbiplot)
+
+library(lubridate)
 ```
+
+```{r}
+?tibbletime
+```
+
 
 ```{r}
 # Viweing the head of my dataset
 anom_path<-"http://bit.ly/CarreFourSalesDataset"
-carefour_anomaly_set<-read_csv(anom_path)%<%group_by(Sales)%<%as_tbl_time(date)
-
+# Loading the dataste
+anomal_df<-read_csv("http://bit.ly/CarreFourSalesDataset")%>%group_by(Date)%>%
+  summarise(total_sales=sum(Sales))
 ```
 ```{r}
+anomal_df<-anomal_df%>% 
+  mutate(Date=as.Date(Date,format="%m,%d,%Y"))%>%
+           as_tbl_time(Date)%>%
+           arrange(mdy(anomal_df$Date))
+```
+```{r}
+head(anomal_df)
+```
+
+
+
+```{r}
 anomalized<-anom_df%<%
-  time_apply(Sales,merge=TRUE)%<%
+  time_apply(total_sales,merge=TRUE)%<%
   anomalize(remainder)%<%
   time_recompose()
 anomalized%<%glimpse
