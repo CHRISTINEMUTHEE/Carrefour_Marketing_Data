@@ -307,6 +307,7 @@ anomal_df<-read_csv("http://bit.ly/CarreFourSalesDataset")%>%group_by(Date)%>%
   summarise(total_sales=sum(Sales))
 ```
 ```{r}
+# Concerting the datetime column from a string to date time format while arranging the dates.
 anomal_df<-anomal_df%>% 
   mutate(Date=as.Date(Date,format="%m,%d,%Y"))%>%
            as_tbl_time(Date)%>%
