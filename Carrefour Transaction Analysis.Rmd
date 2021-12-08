@@ -320,11 +320,13 @@ head(anomal_df)
 
 
 ```{r}
+# Performing anomally detection algorithm
 anomalized<-anom_df%<%
   time_apply(total_sales,merge=TRUE)%<%
   anomalize(remainder)%<%
   time_recompose()
 anomalized%<%glimpse
+# No anomalies were detected
 ```
 
 
